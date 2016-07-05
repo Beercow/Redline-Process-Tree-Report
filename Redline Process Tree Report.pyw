@@ -5,9 +5,10 @@ import csv
 import re
 import graphviz as gv
 import functools
-import sys
 import os
- 
+
+csv.field_size_limit(sys.maxsize)
+
 def buttonPushed(file_name): 
     name = tkFileDialog.askopenfilename(initialdir=(os.getenv('USERPROFILE')+'/Desktop/'), filetypes=(('CSV','*.csv'),('All Files', '*.*')))
     file_name.set(name)
@@ -19,7 +20,7 @@ def createTextBox(parent,file_name):
 def show_entry_fields(val1):
     print val1
     temp = os.getenv('TMP')+'\\Process Tree'
-    digraph = functools.partial(gv.Digraph, format='png')
+    digraph = functools.partial(gv.Digraph, format='svg')
     g1 = digraph()
 
     with open(val1, 'rb') as f:

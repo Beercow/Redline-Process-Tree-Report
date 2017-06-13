@@ -52,7 +52,12 @@ def show_entry_fields(val1):
             
             # Make Process Node
             if cmdline != '':
-                g1.edge('{0}\\n{1}'.format(ppid, ppname),('{0}\\n{1}'.format(pid, pname)),('{0}'.format(cmdline)))
+                A = ('{0}\\n{1}'.format(ppid, ppname))
+                B = ('{0}\\n{1}'.format(pid, pname))
+                g1.node(A, ('{0}\\n{1}\\n{2}'.format(ppid, ppname, cmdline)))
+                g1.node(B, ('{0}\\n{1}'.format(pid, pname)))
+                g1.edge(A, B)
+#                g1.edge('{0}\\n{1}'.format(ppid, ppname),('{0}\\n{1}'.format(pid, pname)),('{0}'.format(cmdline)))
             else:
                 g1.edge('{0}\\n{1}'.format(ppid, ppname),('{0}\\n{1}'.format(pid, pname)))
         

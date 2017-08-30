@@ -1,3 +1,5 @@
+activate_this = 'C:\\Users\\220551\\Virtualenv\\redline\\Scripts\\activate_this.py'
+execfile(activate_this, dict(__file__=activate_this))
 ## Redline 1.20 supports process cmdline, and this creates process with cmdline
 ## Read [Agent Events] - [Process Events]
 # -*- coding: utf-8 -*-
@@ -11,6 +13,9 @@ import graphviz as gv
 import functools
 import os
 import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 #import pdb; pdb.set_trace()
 
@@ -35,7 +40,6 @@ def show_entry_fields(val1):
     with open(val1, 'rb') as f:
         reader = csv.DictReader(f)
         rows = [row for row in reader if row['Action'] == 'start']
-        number = 1
         for row in rows:
             cmdline = ''
             ppname = str(row['Parent Name'])
@@ -44,33 +48,26 @@ def show_entry_fields(val1):
             pname = str(row['Process Name'])
             cmdline = str(row['Command Line'])
             cmdline = cmdline.replace('\\','\\\\')
-            cmdline = ''.join([i if ord(i) < 128 else ' ' for i in cmdline])
             
             # remove unnecessary process
             if pname == 'xagt.exe' or ppname == 'xagt.exe':
                 continue
             if pname == 'bash.exe' or ppname == 'bash.exe':
                 continue
-            if pname == 'vf_agent.exe':
-                continue
             
             # Make Process Node
             if cmdline != '':
-                A = ('{0}\\n{1}'.format(ppid, ppname))
-                B = str(number)
-                C = ('{0}\\n{1}'.format(pid, pname))
-                g1.node(A, ('{0}\\n{1}'.format(ppid, ppname)), style='invis', width='0', height='0', fixedsize='true')
-                g1.node(B, ('{0}\\n{1}\\n{2}'.format(ppid, ppname, cmdline)), shape='box')
-                g1.node(C, ('{0}\\n{1}'.format(pid, pname)), shape='box')
-                g1.edge(A, B, dir='none')
-                g1.edge(B, C, dir='none')
-                number += 1
+                A = ('{0}\\n{1}\\n{2}'.format(ppid, ppname, cmdline))
+                B = ('{0}\\n{1}'.format(pid, pname))
+                g1.node(A, ('{0}\\n{1}\\n{2}'.format(ppid, ppname, cmdline)))
+                g1.node(B, ('{0}\\n{1}'.format(pid, pname)))
+                g1.edge(A, B)
 #                g1.edge('{0}\\n{1}'.format(ppid, ppname),('{0}\\n{1}'.format(pid, pname)),('{0}'.format(cmdline)))
             else:
-                g1.attr('node', shape='box')
                 g1.edge('{0}\\n{1}'.format(ppid, ppname),('{0}\\n{1}'.format(pid, pname)))
-#    g1.node_attr={'shape': 'box'}
-    g1.render(temp, view=True, cleanup=True)
+        
+    g1.node_attr={'shape': 'box'}
+    g1.render(u'temp', view=True, cleanup=True)
       
 
 def main():   
